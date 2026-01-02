@@ -1,0 +1,7 @@
+target/
+.mvn/wrapper/
+.mvn/timing.properties
+.mvn/wrapper/dists/
+.env
+.env.*
+*.log

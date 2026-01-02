@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Segoe UI", "Segoe UI Variable", "Helvetica Neue", "Calibri", "Verdana", sans-serif;
+  color: #0b1c2c;
+}
+
+body {
+  margin: 0;
+  background-color: #f7f8fa;
+}
+
+@layer components {
+  .m365-card {
+    @apply rounded-lg bg-panel shadow-card border border-slate-100;
+  }
+  .m365-table {
+    @apply w-full border-separate border-spacing-0 text-sm;
+  }
+  .m365-th {
+    @apply text-left text-xs uppercase tracking-wide text-muted bg-slate-50 border-b border-slate-200 px-4 py-2;
+  }
+  .m365-td {
+    @apply px-4 py-3 border-b border-slate-100 text-sm;
+  }
+}

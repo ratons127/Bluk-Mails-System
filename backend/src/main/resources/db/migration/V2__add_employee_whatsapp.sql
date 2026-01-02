@@ -1,0 +1,1 @@
+ALTER TABLE employees ADD COLUMN IF NOT EXISTS whatsapp_number VARCHAR(64);

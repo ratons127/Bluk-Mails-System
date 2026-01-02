@@ -1,0 +1,128 @@
+%%{init: {'theme': 'base'}}%%
+erDiagram
+    departments ||--o{ departments : parent
+    departments ||--o{ employees : has
+    locations ||--o{ employees : has
+    audiences ||--o{ audience_rules : rules
+    smtp_accounts ||--o{ sender_identities : owns
+    sender_identities ||--o{ campaigns : sends
+    smtp_accounts ||--o{ campaigns : routes
+    campaigns ||--o{ campaign_audiences : targets
+    audiences ||--o{ campaign_audiences : included
+    campaigns ||--o{ approvals : approvals
+    campaigns ||--o{ campaign_recipients : recipients
+
+    departments {
+        BIGINT id PK
+        VARCHAR name
+        BIGINT parent_id FK
+    }
+    locations {
+        BIGINT id PK
+        VARCHAR name
+    }
+    employees {
+        BIGINT id PK
+        VARCHAR email
+        VARCHAR full_name
+        VARCHAR title
+        VARCHAR status
+        BIGINT department_id FK
+        BIGINT location_id FK
+        VARCHAR external_id
+    }
+    audiences {
+        BIGINT id PK
+        VARCHAR name
+        VARCHAR description
+        VARCHAR created_by
+        TIMESTAMP created_at
+    }
+    audience_rules {
+        BIGINT id PK
+        BIGINT audience_id FK
+        VARCHAR rule_type
+        VARCHAR rule_value
+    }
+    smtp_accounts {
+        BIGINT id PK
+        VARCHAR name
+        VARCHAR provider
+        VARCHAR host
+        INTEGER port
+        VARCHAR username
+        VARCHAR password
+        BOOLEAN use_tls
+        INTEGER throttle_per_minute
+    }
+    sender_identities {
+        BIGINT id PK
+        VARCHAR display_name
+        VARCHAR email
+        BIGINT smtp_account_id FK
+    }
+    campaigns {
+        BIGINT id PK
+        VARCHAR title
+        VARCHAR subject
+        TEXT html_body
+        TEXT text_body
+        VARCHAR category
+        BIGINT sender_identity_id FK
+        BIGINT smtp_account_id FK
+        VARCHAR status
+        TIMESTAMP scheduled_at
+        TIMESTAMP send_window_start
+        TIMESTAMP send_window_end
+        TEXT attachments_json
+        BOOLEAN emergency_bypass
+        VARCHAR emergency_reason
+        VARCHAR created_by
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+    campaign_audiences {
+        BIGINT id PK
+        BIGINT campaign_id FK
+        BIGINT audience_id FK
+    }
+    approvals {
+        BIGINT id PK
+        BIGINT campaign_id FK
+        VARCHAR required_role
+        VARCHAR status
+        VARCHAR approver_email
+        TEXT comment
+        TIMESTAMP created_at
+        TIMESTAMP acted_at
+    }
+    campaign_recipients {
+        BIGINT id PK
+        BIGINT campaign_id FK
+        VARCHAR email
+        VARCHAR full_name
+        VARCHAR status
+        TEXT last_error
+        INTEGER retry_count
+        TIMESTAMP updated_at
+    }
+    suppression_list {
+        BIGINT id PK
+        VARCHAR email
+        VARCHAR reason
+        TIMESTAMP created_at
+        VARCHAR source
+    }
+    audit_logs {
+        BIGINT id PK
+        VARCHAR actor_email
+        VARCHAR actor_name
+        VARCHAR action
+        VARCHAR resource_type
+        VARCHAR resource_id
+        TEXT before_json
+        TEXT after_json
+        VARCHAR ip
+        VARCHAR user_agent
+        TIMESTAMP created_at
+    }

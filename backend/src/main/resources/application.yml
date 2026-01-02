@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: bulk-email-platform
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/bulk_email}
+    username: ${DB_USER:bulk_email}
+    password: ${DB_PASSWORD:bulk_email}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+    open-in-view: false
+  flyway:
+    enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OIDC_ISSUER_URI:http://localhost:8080/realms/dev}
+
+server:
+  port: ${SERVER_PORT:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+app:
+  internal-domains: ${INTERNAL_DOMAINS:example.com}
+  security:
+    dev-jwt-secret: ${DEV_JWT_SECRET:}
+  attachments:
+    path: ${APP_ATTACHMENTS_PATH:/root/Attachments Files}
+  approval:
+    dept-approval-enabled: ${DEPT_APPROVAL_ENABLED:true}
+  sending:
+    max-test-recipients: ${MAX_TEST_RECIPIENTS:5}
+    worker:
+      poll-interval-ms: ${WORKER_POLL_INTERVAL_MS:5000}
+      batch-size: ${WORKER_BATCH_SIZE:200}
+  throttle:
+    default-per-minute: ${DEFAULT_THROTTLE_PER_MINUTE:500}
+  notification:
+    smtp-account-id: ${APP_NOTIFICATION_SMTP_ACCOUNT_ID:0}
+    sender-identity-id: ${APP_NOTIFICATION_SENDER_IDENTITY_ID:0}
+    reset-base-url: ${APP_NOTIFICATION_RESET_BASE_URL:http://localhost:5173/reset-password}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/bulk_email}
+  jpa:
+    show-sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false

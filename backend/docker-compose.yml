@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bulk_email
+      POSTGRES_USER: bulk_email
+      POSTGRES_PASSWORD: bulk_email
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  backend:
+    build: .
+    restart: unless-stopped
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/bulk_email
+      DB_USER: bulk_email
+      DB_PASSWORD: bulk_email
+      OIDC_ISSUER_URI: http://localhost:8080/realms/dev
+      DEV_JWT_SECRET: dev-secret-change-me-32-bytes-minimum!!
+      SERVER_PORT: 8081
+      INTERNAL_DOMAINS: "*"
+      APP_NOTIFICATION_SMTP_ACCOUNT_ID: 2
+      APP_NOTIFICATION_SENDER_IDENTITY_ID: 5
+      APP_NOTIFICATION_RESET_BASE_URL: http://103.43.151.103:5173/reset-password
+      APP_ATTACHMENTS_PATH: /root/Attachments Files
+    volumes:
+      - /root/Attachments Files:/root/Attachments Files
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+      - mailhog
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --cleanup --interval 300
+volumes:
+  db_data:
